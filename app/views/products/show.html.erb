@@ -1,0 +1,92 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-6">
+      <% if @product.image.present? %>
+        <%= image_tag @product.image, class: 'img-fluid rounded', alt: @product.name, style: 'max-height: 400px; object-fit: cover;' %>
+      <% else %>
+        <div class="bg-light rounded p-5 d-flex align-items-center justify-content-center" style="height: 400px;">
+          <h3 class="text-muted">Фото товару</h3>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-md-6">
+      <h1><%= @product.name %></h1>
+      <p class="lead"><%= @product.description %></p>
+      <h3 class="text-success"><%= number_to_currency(@product.price, unit: ' грн') %></h3>
+      <p><strong>Категорія:</strong> <%= @product.category %></p>
+      <p><strong>Залишок:</strong> <%= @product.stock %></p>
+      <% if @product.stock.zero? %>
+        <div class="alert alert-danger">Sold out! Товар тимчасово недоступний.</div>
+      <% else %>
+        <%= button_to 'Додати в кошик', add_to_cart_path(id: product.id), method: :post, class: 'btn btn-primary w-100' %>
+      <% end %>
+      <%= link_to 'Назад до каталогу', products_path, class: 'btn btn-secondary btn-lg' %>
+    </div>
+  </div>
+
+  <hr class="my-5">
+
+  <h2>Відгуки (<%= @reviews.count %>)</h2>
+  <% if @reviews.any? %>
+    <div class="row">
+      <% @reviews.each do |review| %>
+        <div class="col-md-6 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start">
+                <h6 class="mb-1"><%= review.user.email %></h6>
+                <span class="badge bg-warning text-dark"><%= review.rating %>/5 ⭐</span>
+              </div>
+              <p class="card-text"><%= review.comment %></p>
+              <small class="text-muted"><%= review.created_at.strftime('%d.%m.%Y') %></small>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-muted">Ще немає відгуків. Будь першим!</p>
+  <% end %>
+
+  <% if user_signed_in? %>
+    <h4 class="mt-4">Додати відгук</h4>
+    <%= form_with model: [@product, Review.new], url: product_reviews_path(@product), method: :post, local: true, class: 'row g-3' do |f| %>
+      <div class="col-md-3">
+        <%= f.label :rating, 'Рейтинг', class: 'form-label' %>
+        <%= f.number_field :rating, min: 1, max: 5, class: 'form-control' %>
+      </div>
+      <div class="col-md-6">
+        <%= f.label :comment, 'Коментар', class: 'form-label' %>
+        <%= f.text_area :comment, rows: 3, class: 'form-control' %>
+      </div>
+      <div class="col-md-3 d-flex align-items-end">
+        <%= f.submit 'Відправити', class: 'btn btn-primary w-100' %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="alert alert-info mt-3">
+      <%= link_to 'Увійдіть', new_user_session_path %> щоб залишити відгук.
+    </div>
+  <% end %>
+</div>
+<% @product.reviews.each do |review| %>
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <h6><%= review.user.email %></h6>
+          <span class="badge bg-warning text-dark"><%= review.rating %>/5 ⭐</span>
+          <p class="mt-2"><%= review.comment %></p>
+          <small class="text-muted"><%= review.created_at.strftime('%d.%m.%Y %H:%M') %></small>
+        </div>
+
+        <% if current_user == review.user %>
+          <div class="btn-group-vertical" role="group">
+            <%= link_to 'Редагувати', edit_product_review_path(@product, review), class: 'btn btn-sm btn-outline-primary' %>
+            <%= button_to 'Видалити', product_review_path(@product, review), method: :delete, data: { confirm: 'Ви впевнені?' }, class: 'btn btn-sm btn-outline-danger' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

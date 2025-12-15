@@ -1,0 +1,20 @@
+<div class="container mt-4">
+  <h2>Редагувати відгук</h2>
+
+  <%= form_with model: [@product, @review], local: true do |f| %>
+    <div class="mb-3">
+      <%= f.label :rating, 'Рейтинг (1-5)', class: 'form-label' %>
+      <%= f.number_field :rating, min: 1, max: 5, class: 'form-control' %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :comment, 'Коментар', class: 'form-label' %>
+      <%= f.text_area :comment, rows: 4, class: 'form-control' %>
+    </div>
+
+    <div class="d-flex gap-2">
+      <%= f.submit 'Зберегти зміни', class: 'btn btn-primary' %>
+      <%= link_to 'Скасувати', @product, class: 'btn btn-secondary' %>
+    </div>
+  <% end %>
+</div>
