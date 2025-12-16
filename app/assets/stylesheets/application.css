@@ -403,7 +403,18 @@ body {
      HOMEPAGE (trippiegluck-like)
      ========================== */
 .home-hero{position:relative;overflow:hidden;padding:0}
-.home-hero .hero-bg{position:relative;inset:auto;background-size:cover;background-position:center;filter:contrast(.95) saturate(.95);transform:none;opacity:1;min-height:520px}
+.home-hero .hero-bg{
+    position:relative;
+    inset:auto;
+    background-size:cover;
+    background-position:center;
+    filter:contrast(.95) saturate(.95);
+    transform:none;
+    opacity:1;
+    /* ЗМІНА: Встановлюємо висоту: 100vh мінус висота навбару */
+    min-height: calc(100vh - 80px); /* Припускаємо, що навбар ~80px */
+    height: calc(100vh - 80px); /* Фіксуємо висоту */
+}
 .home-hero .hero-inner{position:relative;padding:0}
 /* hero text removed intentionally */
 

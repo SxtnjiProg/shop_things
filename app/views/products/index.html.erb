@@ -2,18 +2,24 @@
   <section class="home-hero">
     <div class="hero-bg" style="background-image: url('<%= asset_path('biglogo.png') %>')"></div>
     <div class="hero-inner container">
-      <!-- Hero text removed as requested; image-only hero -->
-    </div>
+      </div>
   </section>
 
   <main id="catalog" class="container mt-5">
-    <div class="section-head d-flex justify-content-between align-items-end mb-4">
-      <h2 class="section-title">Каталог</h2>
+    
+    <%# Головний заголовок SS26 по центру сторінки %>
+    <div class="text-center mb-5">
+      <h2 class="section-title" style="font-size: 2.5rem; font-weight: 500; text-transform: uppercase;">SS26</h2>
+    </div>
+
+    <%# Адмін-панель для додавання товару (вирівняна праворуч) %>
+    <div class="d-flex justify-content-end mb-4">
       <% if user_signed_in? && current_user.admin? %>
         <%= link_to '➕ Додати новий товар', new_product_path, class: 'btn btn-primary' %>
       <% end %>
     </div>
 
+    <%# Сітка товарів %>
     <div class="featured-grid">
       <% @products.each_with_index do |product, idx| %>
         <article class="product-card" style="--i: <%= idx %>">
