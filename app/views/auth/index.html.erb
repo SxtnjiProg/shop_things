@@ -1,0 +1,73 @@
+<%# Initialize Devise helpers so forms work outside Devise controllers.
+    Use defensive checks to handle cases where variables exist but are nil. %>
+<% if !defined?(resource) || resource.nil? %>
+  <% resource = User.new %>
+<% end %>
+<% if !defined?(resource_name) || resource_name.nil? %>
+  <% resource_name = :user %>
+<% end %>
+<% if !defined?(resource_class) || resource_class.nil? %>
+  <% resource_class = User %>
+<% end %>
+<% if !defined?(devise_mapping) || devise_mapping.nil? %>
+  <% devise_mapping = Devise.mappings[:user] %>
+<% end %>
+
+<div class="container auth-page" data-controller="auth-modal">
+  <div class="auth-shell" style="max-width:1000px;margin:64px auto;display:flex;gap:28px;align-items:stretch">
+    <div class="auth-visual" aria-hidden="true">
+      <div class="visual-blob"></div>
+      <div class="visual-figure">
+        <h3>Welcome back</h3>
+        <p class="muted">Sign in to access your cart, orders and saved items.</p>
+      </div>
+    </div>
+
+    <div class="auth-card" role="region" aria-labelledby="auth-title">
+      <div class="auth-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h2 id="auth-title" class="modal-title">Account</h2>
+        <div class="auth-tabs-nav" role="tablist">
+          <button type="button" class="tab-btn" data-action="click->auth-modal#switch" data-auth-modal-target="tabBtn" data-panel="login">Login</button>
+          <button type="button" class="tab-btn" data-action="click->auth-modal#switch" data-auth-modal-target="tabBtn" data-panel="register">Register</button>
+          <div class="tab-indicator" data-auth-modal-target="indicator"></div>
+        </div>
+      </div>
+
+      <div class="auth-panels">
+        <div class="auth-panel active" data-auth-modal-target="panel" data-panel-name="login">
+          <%= form_with url: user_session_path, scope: :user, local: true do |f| %>
+            <div class="mb-3">
+              <%= f.email_field :email, autofocus: true, class: 'form-control', placeholder: 'Email' %>
+            </div>
+            <div class="mb-3">
+              <%= f.password_field :password, autocomplete: 'current-password', class: 'form-control', placeholder: 'Password' %>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btn-white-toggle" type="submit">Login</button>
+              <%= link_to 'Forgot password?', new_password_path(resource_name), class: 'text-muted ms-2' %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="auth-panel" data-auth-modal-target="panel" data-panel-name="register">
+          <%= form_with url: user_registration_path, scope: :user, local: true do |f| %>
+            <div class="mb-3">
+              <%= f.email_field :email, class: 'form-control', placeholder: 'Email' %>
+            </div>
+            <div class="mb-3">
+              <%= f.password_field :password, class: 'form-control', placeholder: 'Password' %>
+            </div>
+            <div class="mb-3">
+              <%= f.password_field :password_confirmation, class: 'form-control', placeholder: 'Confirm password' %>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btn-white-toggle" type="submit">Register</button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

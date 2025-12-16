@@ -1,10 +1,499 @@
 @import "bootstrap/scss/bootstrap";
 
+/* =======================================================
+   ГЛОБАЛЬНІ СТИЛІ
+   ======================================================= */
+body {
+    background-color: #ffffff;
+    color: #1a1a1a;
+    font-family: Arial, sans-serif;
+    padding-top: 0 !important;
+}
+
+/* Навігаційна панель: Високий контраст */
+.navbar {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #1a1a1a; /* Чітка лінія */
+    box-shadow: none;
+    padding: 1.5rem 0; /* Більший відступ зверху/знизу */
+}
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #1a1a1a !important;
+        text-decoration: none; /* убираємо підкреслення за замовчуванням */
+        transition: color .18s ease, text-decoration .12s ease;
+    /* ВИРІВНЮВАННЯ: Це буде центрований елемент */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+        text-decoration: underline; /* Підкреслення при наведенні */
+        color: #000000; /* Чорний колір при наведенні */
+    color: #1a1a1a !important;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: text-decoration 0.2s;
+}
+.nav-link:hover {
+    text-decoration: underline !important; /* ДОДАНО: Підкреслення при наведенні */
+    color: #000000 !important;
+}
+
+/* Align navbar children vertically */
+.navbar .container {display:flex;align-items:center;position:relative}
+.navbar .navbar-nav {display:flex;align-items:center;gap:1rem}
+.navbar-text {display:flex;align-items:center}
+.nav-link {display:flex;align-items:center;padding:.45rem .65rem}
+.navbar-brand {top:50%;transform:translate(-50%,-50%);}
+
+/* =======================================================
+   СТИЛІ КАРТОК ТОВАРІВ (products/index)
+   ======================================================= */
 .card {
-    transition: transform 0.2s ease-in-out;
+    border-radius: 0; 
+    border: 0; 
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: none; 
+    transition: none; 
 }
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transform: none; 
+    box-shadow: none;
 }
-body { background-color: #f8f9fa; }
+
+.card-img-top {
+    border-radius: 0;
+    width: 100%;
+    height: 600px;
+    object-fit: cover;
+}
+
+.card-body {
+    text-align: left;
+    padding: 15px 0;
+}
+
+/* Назва товару */
+.card-title {
+    margin-bottom: 5px;
+    min-height: 24px;
+}
+.card-title a {
+    font-weight: 500;
+    font-size: 1rem;
+    color: #1a1a1a;
+    text-decoration: underline;
+    display: block; 
+    text-align: left;
+}
+.card-title a:hover {
+    text-decoration: underline;
+    color: #000000;
+}
+
+/* Стиль для ціни у каталозі */
+.product-price {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1a1a1a !important; 
+    margin-bottom: 0;
+    text-align: left;
+}
+
+/* Приховуємо елементи у каталозі */
+.minimal-card .card-text,
+.minimal-card .btn-primary,
+.minimal-card .btn-outline-secondary {
+    display: none !important;
+}
+.minimal-card .mt-auto {
+    display: block !important;
+    margin-top: 0 !important;
+}
+
+/* SOLD OUT OVERLAY */
+.sold-out-overlay {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 10;
+}
+.badge.bg-danger {
+    background-color: #1a1a1a !important; 
+    color: #ffffff !important;
+    font-size: 0.9em;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    padding: 8px 12px;
+    border-radius: 0;
+}
+
+/* =======================================================
+   СТИЛІ СТОРІНКИ ДЕТАЛЕЙ (products/show) - ФІНАЛЬНИЙ МАКЕТ
+   ======================================================= */
+.product-detail-page {
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+.product-detail-layout {
+    display: flex;
+    justify-content: flex-start; /* Вирівнюємо ліворуч щоб зображення було лівіше */
+    gap: 80px; /* більший відступ між зображенням та текстом */
+    padding: 0 20px;
+}
+
+.product-image-section {
+    width: 600px; /* ФІКСОВАНА ШИРИНА */
+    flex-shrink: 0;
+    padding-right: 100px; /* Збільшений відступ праворуч, щоб текст знаходився далі */
+}
+.product-image-section img {
+    height: 800px; /* ФІКСОВАНА ВИСОТА */
+    width: 100%;
+    object-fit: cover;
+}
+.product-image-section .bg-light {
+    height: 600px;
+}
+
+
+.product-info-section {
+    width: 400px; /* ФІКСОВАНА ШИРИНА КОЛОНКИ ІНФО */
+    flex-shrink: 0;
+    padding-left: 20px;
+    
+    /* ЗМІНА: РОБИМО СЕКЦІЮ "ЛИПКОЮ" */
+    position: sticky;
+    top: 50px; /* Фіксуємо 50px від верхнього краю */
+    align-self: flex-start;
+}
+
+/* Назва товару на деталях */
+.product-info-section h1 {
+    font-size: 2.5rem; /* ЗБІЛЬШЕНО */
+    font-weight: 500;
+    margin-bottom: 0;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+/* Ціна на деталях */
+.detail-price {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #1a1a1a !important;
+    margin-top: 10px;
+}
+
+/* Кнопка "Add to cart" (ЧОРНА) */
+.add-to-cart-btn {
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+    color: #ffffff !important;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 1px;
+    padding: 12px 0;
+    border-radius: 0;
+    font-size: 1rem;
+}
+.add-to-cart-btn:hover {
+    background-color: #333333 !important;
+    border-color: #333333 !important;
+}
+
+.product-meta-small {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: -5px;
+}
+
+/* Секція опису та розмірів */
+.product-description-list {
+    font-size: 1.05rem; /* ЗБІЛЬШЕНО */
+    line-height: 1.7;
+    margin-top: 20px;
+    list-style: none;
+    padding-left: 0;
+}
+.product-description-list li {
+    margin-bottom: 5px;
+}
+
+/* Tabs for product details/reviews */
+.product-tabs{border-top:1px solid rgba(0,0,0,0.04);padding-top:12px}
+.product-tabs .tabs-nav{display:flex;gap:8px;margin-bottom:12px}
+.product-tabs .tab-btn{background:transparent;border:1px solid transparent;padding:8px 12px;border-radius:6px;cursor:pointer;color:var(--text)}
+.product-tabs .tab-btn.active{background:#f3f6fb;border-color:rgba(0,0,0,0.06);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.product-tabs .tabs-content .tab-panel{opacity:0;max-height:0;overflow:hidden;transition:opacity .28s ease, max-height .3s ease}
+.product-tabs .tabs-content .tab-panel.active{opacity:1;max-height:1200px}
+.product-tabs .tabs-content .tab-panel.fade-in{transition:opacity .32s ease, transform .32s ease;transform:translateY(0)}
+/* Reviews styling */
+.tab-review-card{display:flex;gap:12px;padding:14px;border-radius:10px;border:1px solid rgba(15,23,42,0.04);background:#ffffff}
+.tab-review-card .avatar{width:48px;height:48px;border-radius:999px;background:linear-gradient(135deg,#eef2ff,#f8fafc);display:flex;align-items:center;justify-content:center;color:var(--text);font-weight:700}
+.tab-review-card .review-body{flex:1}
+.tab-review-card .review-body h6{margin:0 0 6px;font-size:0.98rem}
+.tab-review-card .review-body p{margin:0 0 8px;color:#374151}
+.tab-review-card .review-meta{font-size:0.85rem;color:#6b7280}
+
+.review-form{display:none;opacity:0;transform:translateY(-6px);transition:opacity .22s ease, transform .22s ease}
+.review-form.visible{display:block;opacity:1;transform:translateY(0)}
+
+.btn-secondary{background:#f3f6fb;color:var(--text);border:1px solid rgba(15,23,42,0.06)}
+
+/* Auth modal styles */
+.auth-tabs-nav .btn{border:1px solid rgba(0,0,0,0.06);background:#fff;transition:all .36s cubic-bezier(.22,.9,.35,1);border-radius:10px;padding:8px 14px}
+.auth-tabs-nav .btn.active{background:#0a84ff;color:#fff;border-color:rgba(10,132,255,0.18);box-shadow:0 10px 30px rgba(10,132,255,0.12);transform:translateY(-3px)}
+.auth-tabs-nav .btn:not(.active){color:#374151;background:transparent}
+.auth-panel{opacity:0;max-height:0;overflow:hidden;transform:translateY(16px);transition:opacity .45s cubic-bezier(.22,.9,.35,1),max-height .45s cubic-bezier(.22,.9,.35,1),transform .45s cubic-bezier(.22,.9,.35,1)}
+.auth-panel.active{opacity:1;max-height:800px;transform:translateY(0)}
+.auth-panel.fade-in{transform:translateY(0);opacity:1}
+
+.modal-content{border-radius:16px}
+.modal-title{font-weight:700}
+
+/* Modal primary (Apple-like) - refined */
+.modal-content .btn-primary{
+    background: linear-gradient(180deg,#0a84ff 0%, #006ae6 100%);
+    border: none;color: #fff;padding:10px 16px;border-radius:12px;box-shadow: 0 12px 36px rgba(10,132,255,0.12);transition:transform .22s cubic-bezier(.22,.9,.35,1),box-shadow .22s ease,opacity .18s ease;
+}
+.modal-content .btn-primary:hover{transform:translateY(-3px);box-shadow:0 18px 44px rgba(10,132,255,0.14);opacity:0.98}
+.modal-content .btn-primary:active{transform:translateY(-1px)}
+
+/* Auth page styles (non-modal) - minimalized visuals and only tab indicator animation */
+.auth-page .auth-shell{background:#fff;padding:28px;border-radius:14px;box-shadow:0 8px 20px rgba(12,24,48,0.04)}
+.auth-page .auth-header{margin-bottom:16px}
+.auth-page .auth-tabs-nav .btn{border-radius:10px;padding:8px 12px;border:1px solid rgba(0,0,0,0.04);background:transparent;transition: none}
+.auth-page .auth-tabs-nav .btn.active{color:#0a84ff;border-bottom:3px solid #0a84ff}
+.auth-page .auth-panels{min-height:180px}
+/* Show only the active panel (no animation) */
+.auth-page .auth-panel{display:none;opacity:0;transform:none;max-height:0;overflow:hidden}
+.auth-page .auth-panel.active{display:block;opacity:1;max-height:9999px;overflow:visible}
+
+/* Minimal gradient white button */
+.btn-white-toggle{
+    background: linear-gradient(180deg,#ffffff 0%, #f7f8fb 100%);
+    color: #0b0b0b;
+    border: 1px solid rgba(15,23,42,0.06);
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: none;
+}
+.btn-white-toggle:hover, .btn-white-toggle:focus{
+    background: #0b0b0b;
+    color: #ffffff;
+}
+
+/* clicked state: black -> green (persist until reload) */
+.btn-white-toggle.btn-sent{
+    background: #10b981 !important; /* emerald green */
+    color: #ffffff !important;
+    border-color: rgba(16,185,129,0.12) !important;
+    box-shadow: 0 6px 18px rgba(16,185,129,0.12);
+}
+
+/* Small form fixes for auth page */
+.auth-page .form-control{border-radius:8px;padding:10px}
+.auth-page .modal-title{font-size:1.4rem}
+
+/* Split layout visuals (static, no floating animation) */
+.auth-shell{display:flex;align-items:stretch}
+.auth-visual{flex:1;border-radius:12px;position:relative;overflow:hidden;background:linear-gradient(135deg,#f8fbff 0%,#f3f7ff 100%);display:flex;align-items:center;justify-content:center;padding:28px}
+.auth-visual .visual-blob{position:absolute;right:-80px;top:-60px;width:380px;height:380px;background:radial-gradient(circle at 30% 30%, rgba(10,132,255,0.06), rgba(10,132,255,0.02)),linear-gradient(180deg,#f1f6ff,#f7fbff);border-radius:50%;filter:blur(28px);transform:none;animation:none;opacity:0.95}
+.auth-visual .visual-figure{position:relative;z-index:2;max-width:300px;text-align:left}
+.auth-visual h3{font-size:2rem;margin:0 0 8px}
+.auth-visual .muted{color:#52606d}
+
+.auth-card{flex:0 0 420px;background:#ffffff;border-radius:12px;padding:20px 22px;box-shadow:0 8px 20px rgba(12,24,48,0.04);display:flex;flex-direction:column}
+.auth-card .auth-header{padding-bottom:8px}
+.auth-card .auth-tabs-nav{position:relative;display:flex;gap:8px}
+.auth-card .tab-btn{background:transparent;border:0;padding:8px 12px;border-radius:8px;color:#273043;font-weight:600;cursor:pointer;transition:color .22s}
+.auth-card .tab-btn.active{color:#0a84ff}
+.auth-card .tab-indicator{display:none}
+
+.auth-card .auth-panels{margin-top:18px}
+.auth-card .auth-panel{background:transparent}
+
+/* Tighter form spacing */
+.auth-card .form-control{border-radius:10px;padding:12px}
+.auth-card .mb-3{margin-bottom:14px}
+
+@media (max-width:900px){
+    .auth-shell{flex-direction:column}
+    .auth-visual{order:2;padding:18px}
+    .auth-card{flex:1}
+}
+
+/* Toasts: bottom-right floating messages */
+.app-toast-container{
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 1080;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    pointer-events: none;
+}
+.app-toast{
+    pointer-events: auto;
+    min-width: 260px;
+    max-width: 360px;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 12px 14px;
+    box-shadow: 0 8px 30px rgba(15,23,42,0.08);
+    color: #0b0b0b;
+    opacity: 1;
+    transition: opacity .22s ease, transform .22s ease;
+}
+.app-toast .app-toast-body{font-size:0.95rem}
+.app-toast-error{border-left:4px solid #ef4444}
+.app-toast-info{border-left:4px solid #0ea5ff}
+.app-toast-success{border-left:4px solid #10b981}
+
+/* toast close button */
+.app-toast-close{background:transparent;border:1px solid rgba(0,0,0,0.08);border-radius:4px;padding:2px 6px;margin-left:8px;cursor:pointer}
+
+/* field error highlight and shake animation */
+.field-error{border-color:#ef4444 !important;box-shadow:0 6px 18px rgba(239,68,68,0.08) !important}
+@keyframes shakeX{0%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}100%{transform:translateX(0)}}
+.field-error.animate-shake{animation:shakeX .5s ease}
+
+/* password strength meter */
+.password-meter{display:flex;align-items:center;gap:10px;margin-top:6px}
+.password-meter .bar{width:96px;height:8px;background:#eef2ff;border-radius:6px;overflow:hidden}
+.password-meter .bar > i{display:block;height:100%;width:0%;background:#ef4444;border-radius:6px;transition:width .2s ease,background .2s ease}
+.password-meter .label{font-size:0.85rem;color:#6b7280}
+.password-meter.weak .bar > i{width:30%;background:#ef4444}
+.password-meter.ok .bar > i{width:65%;background:#f59e0b}
+.password-meter.strong .bar > i{width:100%;background:#10b981}
+
+/* Send (paper plane) icon button for review form */
+.send-btn{
+    display:inline-grid;place-items:center;
+    width:44px;height:44px;border-radius:999px;
+    background:transparent;border:0;color:#0b64ff;font-size:1.05rem;cursor:pointer;
+    transition:transform .22s cubic-bezier(.2,.9,.2,1),filter .18s ease,box-shadow .18s ease;
+    padding:0;line-height:1;
+}
+.send-btn i{display:inline-block;transform:translateY(0);transition:transform .22s ease}
+.send-btn:focus{outline:none;box-shadow:0 0 0 6px rgba(11,100,255,0.08);border-radius:999px}
+.send-btn:hover{transform:translateY(-3px) rotate(-8deg) scale(1.06);filter:brightness(1.02);box-shadow:0 10px 20px rgba(11,100,255,0.08)}
+.send-btn:active{transform:translateY(-1px) rotate(-6deg) scale(.99)}
+
+
+
+
+/* Елементи форм (Select, Quantity) */
+.form-select, .form-control {
+    border-radius: 0;
+    border: 1px solid #1a1a1a;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+}
+
+/* Адмін-дії */
+
+/* ==========================
+     HOMEPAGE (trippiegluck-like)
+     ========================== */
+.home-hero{position:relative;overflow:hidden;padding:0}
+.home-hero .hero-bg{position:relative;inset:auto;background-size:cover;background-position:center;filter:contrast(.95) saturate(.95);transform:none;opacity:1;min-height:520px}
+.home-hero .hero-inner{position:relative;padding:0}
+/* hero text removed intentionally */
+
+.featured-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.product-card{position:relative;overflow:hidden;border-radius:6px;background:#fff;cursor:pointer;transition:none;padding:0}
+.product-card:hover{transform:none;box-shadow:none}
+.product-image{height:420px;background-size:cover;background-position:center}
+.product-meta{padding:12px 14px}
+.product-name{font-size:1.05rem;margin:0 0 6px;font-weight:600}
+.product-price{font-weight:600;color:#0b0b0b}
+.sold-out-badge{position:absolute;top:12px;left:12px;background:#111;color:#fff;padding:8px 10px;font-size:0.82rem;font-weight:700}
+.product-link{display:block;color:inherit;text-decoration:none}
+
+@media (max-width:1100px){
+    .featured-grid{grid-template-columns:repeat(2,1fr)}
+    .hero-title{font-size:2.4rem}
+}
+@media (max-width:700px){
+    .featured-grid{grid-template-columns:1fr}
+    .home-hero .hero-inner{flex-direction:column}
+    .hero-visual{width:100%;height:240px}
+    .hero-title{font-size:1.7rem}
+}
+
+.admin-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-start;
+}
+.admin-actions .btn {
+    border-radius: 0;
+    font-size: 0.8rem;
+    border: 1px solid #1a1a1a;
+    color: #1a1a1a;
+    background-color: transparent;
+    padding: 8px;
+}
+.admin-actions .btn:hover {
+    background-color: #f0f0f0;
+}
+/* Ensure cards have no borders or shadows globally */
+.card, .card.card, .card .card-body {
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+}
+.card-img-top {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* =======================================================
+   СТИЛІ ФУТЕРА (Footer)
+   ======================================================= */
+.main-footer {
+    padding: 30px 0;
+    margin-top: 50px; /* Відступ від основного контенту */
+    background-color: #ffffff;
+    border-top: 1px solid #f0f0f0; /* Легка розділяюча лінія */
+    text-align: center;
+}
+
+.footer-links {
+    font-size: 0.8rem;
+    color: #6c757d; /* Сірий колір, як на референсі */
+    font-weight: 500;
+}
+
+.footer-links a {
+    color: #6c757d;
+    text-decoration: none;
+    transition: color 0.2s;
+    padding: 0 5px;
+}
+
+.footer-links a:hover {
+    color: #1a1a1a;
+    text-decoration: underline;
+}
+
+/* Розділювач */
+.footer-links .separator {
+    margin: 0 5px;
+    display: inline-block;
+    color: #adb5bd;
+}
+
+.footer-copyright {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-bottom: 0;
+}

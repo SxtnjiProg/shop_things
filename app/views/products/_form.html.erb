@@ -1,0 +1,63 @@
+<%= form_with(model: @product, local: true, html: { class: 'needs-validation', multipart: true }) do |form| %>
+  <% if form.object.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger">
+      <h2><%= form.object.errors.count %> помилок заборонили збереження товару:</h2>
+      <ul>
+        <% form.object.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :name, 'Назва товару', class: 'form-label' %>
+    <%= form.text_field :name, class: 'form-control', required: true %>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :price, 'Ціна (грн)', class: 'form-label' %>
+      <%= form.number_field :price, step: 0.01, class: 'form-control', required: true %>
+    </div>
+    <div class="col-md-6 mb-3">
+      <%= form.label :stock, 'Кількість на складі', class: 'form-label' %>
+      <%= form.number_field :stock, class: 'form-control', required: true %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :category, 'Категорія', class: 'form-label' %>
+    <%= form.text_field :category, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :description, 'Опис', class: 'form-label' %>
+    <%= form.text_area :description, rows: 4, class: 'form-control' %>
+  </div>
+  
+  <div class="mb-3">
+    <%= form.label :image, 'Зображення', class: 'form-label' %>
+    
+    <% if form.object.image.present? %>
+      <div class="mb-2">
+        <p>Поточне зображення:</p>
+        <%# ВИПРАВЛЕННЯ: Використовуємо .url %>
+        <%= image_tag form.object.image.url, class: 'img-thumbnail', style: 'max-width: 100px;' %>
+      </div>
+    <% end %>
+    
+    <%= form.file_field :image, class: 'form-control' %>
+    <div class="form-text">Завантажити файл з комп'ютера.</div>
+    
+    <hr>
+    <%= form.label :remote_image_url, 'Або вставте посилання на зображення', class: 'form-label mt-2' %>
+    <%= form.text_field :remote_image_url, class: 'form-control' %>
+    <div class="form-text">Використовується CarrierWave для завантаження з URL.</div>
+  </div>
+  
+
+  <div class="d-grid gap-2">
+    <%= form.submit (@product.new_record? ? 'Створити товар' : 'Оновити товар'), class: 'btn btn-primary' %>
+  </div>
+<% end %>

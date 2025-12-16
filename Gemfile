@@ -53,6 +53,7 @@ gem 'carrierwave', '~> 3.0'     # Завантаження фото товарі
 gem 'mini_magick'               # Обробка зображень (resize для каталогу)
 gem 'stripe', '~> 7.0'          # Симуляція оплати (checkout для кошика)
 
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]

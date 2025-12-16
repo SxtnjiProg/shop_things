@@ -1,16 +1,18 @@
-<h2>Resend confirmation instructions</h2>
+<div class="auth-card auth-devise-card">
+  <h2 class="mb-3">Resend confirmation</h2>
+  <%= form_with url: confirmation_path(resource_name), scope: :user, local: true do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
 
-<%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+    <div class="mb-3">
+      <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email) %>
+    </div>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email) %>
+    <div class="d-flex">
+      <button class="btn btn-white-toggle" type="submit">Resend confirmation</button>
+    </div>
+  <% end %>
+
+  <div class="mt-3">
+    <%= render "devise/shared/links" %>
   </div>
-
-  <div class="actions">
-    <%= f.submit "Resend confirmation instructions" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>

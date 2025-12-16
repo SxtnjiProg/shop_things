@@ -1,0 +1,6 @@
+<div class="container mt-4">
+  <h1>Редагування товару: <%= @product.name %></h1>
+  <%= render 'form' %>
+  <%= link_to 'Переглянути товар', @product, class: 'btn btn-outline-info mt-3' %>
+  <%= link_to 'Назад до каталогу', products_path, class: 'btn btn-outline-secondary mt-3' %>
+</div>

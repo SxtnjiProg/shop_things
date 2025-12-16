@@ -1,5 +1,6 @@
 <% if resource.errors.any? %>
-  <div id="error_explanation" data-turbo-cache="false">
+  <%# Keep an accessible error summary but also emit initial toasts for JS to pick up %>
+  <div id="error_explanation" data-turbo-cache="false" class="visually-hidden">
     <h2>
       <%= I18n.t("errors.messages.not_saved",
                  count: resource.errors.count,
@@ -12,4 +13,9 @@
       <% end %>
     </ul>
   </div>
+
+  <%# server-rendered initial toasts (removed by toast controller) %>
+  <% resource.errors.full_messages.each do |message| %>
+    <div class="initial-toast" data-toast-type="error" data-toast-message="<%= j message %>"></div>
+  <% end %>
 <% end %>
