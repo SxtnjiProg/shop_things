@@ -7,7 +7,8 @@
         </div>
         
         <div class="card-body p-4">
-          <%= form_with model: @order, url: orders_path, method: :post, local: true do |f| %>
+          <%# ✅ FIX 3: data: { turbo: false } вимикає Turbo Drive для цієї форми %>
+          <%= form_with model: @order, url: orders_path, method: :post, local: true, data: { turbo: false } do |f| %>
             
             <% if @order.errors.any? %>
               <div class="alert alert-danger rounded-3">

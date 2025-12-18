@@ -12,4 +12,25 @@
     <%= f.submit "Створити", class: "btn btn-primary" %>
     <%= link_to "Назад", profile_path, class: "btn btn-outline-secondary ms-2" %>
   <% end %>
+  <div class="row">
+  <% @categories.each do |category| %>
+    <div class="col-md-4 mb-3">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title"><%= category.name %></h5>
+          
+          <%= link_to 'Переглянути', category, class: "btn btn-primary btn-sm" %>
+          
+          <%# Цей блок побачить ТІЛЬКИ адмін %>
+          <% if policy(category).destroy? %>
+            <%= link_to 'Видалити', category_path(category), 
+                data: { turbo_method: :delete, turbo_confirm: 'Видалити категорію?' }, 
+                class: "btn btn-danger btn-sm" %>
+          <% end %>
+
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
 </div>

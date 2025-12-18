@@ -1,10 +1,10 @@
 class ProductsController < ApplicationController
-  # Захищаємо дії, які не є index/show, вимагаючи входу
+  # Захищаємо дії, вимагаючи входу (крім перегляду)
   before_action :authenticate_user!, except: [:index, :show]
   before_action :set_product, only: [:show, :edit, :update, :destroy]
-  
-  # Pundit: перевіряємо, чи була викликана авторизація
-  after_action :verify_authorized, except: [:index, :show] 
+
+  # Pundit: перевірки авторизації
+  after_action :verify_authorized, except: [:index, :show]
   after_action :verify_policy_scoped, only: [:index]
 
   def index
@@ -13,32 +13,34 @@ class ProductsController < ApplicationController
 
   def show
     @reviews = @product.reviews.order(created_at: :desc)
-    # Тепер тут НЕ потрібен authorize @product
   end
 
   def new
     @product = Product.new
-    authorize @product # Перевіряє ProductPolicy#new?
+    authorize @product
   end
 
   def create
+    # Використовуємо наш (налагоджений) метод product_params
     @product = Product.new(product_params)
-    authorize @product # Перевіряє ProductPolicy#create?
-    
+    authorize @product
+
     if @product.save
       redirect_to @product, notice: 'Товар успішно створено.'
     else
+      # Якщо помилка - виведемо її в консоль для перевірки
+      puts "!!! ПОМИЛКА ЗБЕРЕЖЕННЯ: #{@product.errors.full_messages} !!!"
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    authorize @product # Перевіряє ProductPolicy#edit?
+    authorize @product
   end
 
   def update
-    authorize @product # Перевіряє ProductPolicy#update?
-    
+    authorize @product
+
     if @product.update(product_params)
       redirect_to @product, notice: 'Товар успішно оновлено.'
     else
@@ -47,8 +49,7 @@ class ProductsController < ApplicationController
   end
 
   def destroy
-    authorize @product # Перевіряє ProductPolicy#destroy?
-    
+    authorize @product
     @product.destroy
     redirect_to products_url, notice: 'Товар успішно видалено.'
   end
@@ -59,19 +60,27 @@ class ProductsController < ApplicationController
     @product = Product.find(params[:id])
   end
 
+  # Основний метод, де виникала помилка
   def product_params
-    # !!! ВИПРАВЛЕННЯ: Додано image_2, image_3, image_4 для Strong Parameters !!!
-    params.require(:product).permit(
-      :name, 
-      :price, 
-      :description, 
-      :category, 
-      :image, 
-      :remote_image_url, 
+    # 1. Виводимо в консоль те, що прийшло
+    puts "=== [DEBUG] Вхідні параметри: #{params[:product].inspect} ==="
+
+    permitted = params.require(:product).permit(
+      :name,
+      :price,
+      :description,
       :stock,
-      :image_2, 
-      :image_3, 
+      :category_id,       # Важливий параметр
+      :image,
+      :remote_image_url,
+      :image_2,
+      :image_3,
       :image_4
     )
+
+    # 2. Виводимо в консоль те, що Rails дозволив
+    puts "=== [DEBUG] Дозволені параметри (після permit): #{permitted.inspect} ==="
+
+    permitted
   end
 end

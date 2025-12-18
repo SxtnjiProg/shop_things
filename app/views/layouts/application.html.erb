@@ -24,7 +24,27 @@
       <div class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-row" style="gap: 1.5rem;">
         <%= link_to 'Home', root_path, class: 'nav-link' %>
         <%# Приклад посилання з випадаючим меню, якщо потрібно %>
-        <%= link_to 'Categories', '#', class: 'nav-link' %> 
+        <%# Випадаюче меню категорій %>
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCategories" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Categories
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownCategories">
+            <%# Перебираємо всі категорії %>
+            <% Category.all.each do |category| %>
+              <li>
+                <%= link_to category.name, category, class: "dropdown-item" %>
+              </li>
+            <% end %>
+            
+            <li><hr class="dropdown-divider"></li>
+            
+            <%# Посилання на сторінку керування (для всіх) %>
+            <li>
+              <%= link_to "Всі категорії (Керування)", categories_path, class: "dropdown-item fw-bold" %>
+            </li>
+          </ul>
+        </div>
       </div>
       
       <%# ЦЕНТРАЛЬНИЙ ЛОГОТИП %>
