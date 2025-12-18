@@ -1,2 +1,109 @@
-<h1>Cart#index</h1>
-<p>Find me in app/views/cart/index.html.erb</p>
+<div class="container my-5">
+  <div class="row">
+
+    <%# ЛІВА КОЛОНКА: Список товарів у кошику (8 колонок) %>
+    <div class="col-lg-8">
+      <h1 class="mb-4" style="font-weight: 500; text-transform: uppercase;">Shopping Bag</h1>
+
+      <% if @cart_items.any? %>
+        <% @cart_items.each do |item| %>
+          <% product = item[:product] %>
+          
+          <div class="card mb-4 p-0 shadow-sm" style="border: 1px solid #e0e0e0;">
+            <div class="row g-0 align-items-center">
+              
+              <%# Зображення товару %>
+              <div class="col-md-3">
+                <%= link_to product_path(product), class: 'd-block' do %>
+                  <% if product.image.present? %>
+                    <%= image_tag product.image.url, class: "img-fluid rounded-start", style: "object-fit: cover; height: 180px; width: 100%;" %>
+                  <% else %>
+                    <div class="bg-light d-flex align-items-center justify-content-center rounded-start" style="height: 180px;">
+                      <span class="text-muted">No Image</span>
+                    </div>
+                  <% end %>
+                <% end %>
+              </div>
+              
+              <%# Деталі товару та управління %>
+              <div class="col-md-9">
+                <div class="card-body py-3">
+                  <div class="d-flex justify-content-between">
+                    <h5 class="card-title mb-1" style="font-weight: 600;">
+                      <%= link_to product.name, product_path(product), class: 'text-dark text-decoration-none' %>
+                    </h5>
+                    <div class="product-price fs-5" style="font-weight: 600;">
+                      <%= number_to_currency(item[:subtotal], unit: '€') %>
+                    </div>
+                  </div>
+                  
+                  <p class="card-text text-muted mb-3"><small><%= product.category %></small></p>
+
+                  <%# Форма оновлення кількості %>
+                  <%= form_with url: update_cart_quantity_path(product), method: :patch, local: true, class: 'd-flex align-items-center gap-3' do |f| %>
+                    
+                    <div class="d-flex align-items-center">
+                      <%= f.label :quantity, 'Qty', class: 'form-label me-2 mb-0' %>
+                      <%= f.number_field :quantity, value: item[:quantity], min: 1, max: product.stock, class: 'form-control', style: 'width: 70px; border-radius: 0; border-color: #1a1a1a;' %>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-sm btn-outline-dark" style="border-radius: 0;">Update</button>
+                    
+                    <%# Кнопка "Видалити" (встановлює кількість = 0) %>
+                    <%= button_to 'Remove', update_cart_quantity_path(product), method: :patch, params: { quantity: 0 }, data: { turbo_confirm: 'Are you sure you want to remove this item?' }, class: 'btn btn-sm btn-outline-danger', style: 'border-radius: 0;' %>
+                  <% end %>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <%# Кошик порожній %>
+        <div class="alert alert-info border-0" role="alert">
+          Ваш кошик порожній. <%= link_to 'Продовжити покупки', root_path, class: 'alert-link' %>.
+        </div>
+      <% end %>
+    </div>
+
+
+    <%# ПРАВА КОЛОНКА: Підсумок (4 колонки, липка) %>
+    <div class="col-lg-4">
+      <div class="sticky-top" style="top: 80px;">
+        <div class="p-4 bg-light" style="border: 1px solid #e0e0e0; border-radius: 0;">
+          <h4 class="mb-4" style="font-weight: 500;">Order Summary</h4>
+          
+          <%# ПЕРЕВІРКА, ЩО @total ВИЗНАЧЕНИЙ В КОНТРОЛЕРІ %>
+          <% if @total %>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Subtotal</span>
+              <span class="fw-bold"><%= number_to_currency(@total, unit: '€') %></span>
+            </div>
+
+            <div class="d-flex justify-content-between mb-4">
+              <span>Shipping (Flat Rate)</span>
+              <span class="fw-bold">€10.00</span>
+            </div>
+
+            <hr>
+
+            <div class="d-flex justify-content-between fs-5 fw-bold mb-4 mt-3">
+              <span>Total</span>
+              <span><%= number_to_currency(@total + 10, unit: '€') %></span>
+            </div>
+          <% end %>
+
+          <% if @cart_items.any? %>
+            <%# Кнопка Оформлення (ЧОРНА) - тепер використовує коректний маршрут %>
+           <%= link_to checkout_path, class: 'btn w-100 add-to-cart-btn mb-3', style: 'padding: 15px 0;' do %>
+  CHECKOUT
+<% end %>
+            
+            <%# Кнопка Очистити кошик %>
+            <%= button_to 'Clear Cart', clear_cart_path, method: :delete, data: { turbo_confirm: 'Ви впевнені, що хочете очистити кошик?' }, class: 'btn btn-outline-secondary w-100', style: 'border-radius: 0; border-color: #1a1a1a; color: #1a1a1a;' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

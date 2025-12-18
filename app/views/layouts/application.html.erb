@@ -14,6 +14,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <%= javascript_importmap_tags %>
+    <%= yield :head %>
   </head>
   
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -30,42 +31,49 @@
       <a class="navbar-brand" href="/">Trippie Gluck</a>
       
       <%# ПРАВА СЕКЦІЯ (User/Cart) %>
-      <div class="navbar-nav ms-auto d-flex flex-row" style="gap: 1.5rem;">
+      <div class="navbar-nav ms-auto d-flex flex-row align-items-center" style="gap: 1.5rem;">
         <% if user_signed_in? %>
-          <%# Секція адміна/користувача: показуємо тільки частину email перед @ та іконку виходу %>
-          <span class="navbar-text me-3 d-flex align-items-center">
-             <%= current_user.email.to_s.split('@').first %>
-          </span>
-          <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: 'nav-link', aria: { label: 'Вийти' } do %>
-            <i class="bi bi-box-arrow-right" style="font-size:1.15rem" aria-hidden="true"></i>
-          <% end %>
           
-          <%# Іконка кошика (можна замінити на текст 'Кошик', якщо хочете) %>
-          <%= link_to cart_path, class: 'nav-link' do %>
+          <%# --- ПОЧАТОК ЗМІН: Випадаюче меню профілю --- %>
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <%= current_user.email.to_s.split('@').first %>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><%= link_to "Мій профіль", profile_path, class: "dropdown-item" %></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><%= button_to "Вийти", destroy_user_session_path, method: :delete, class: "dropdown-item text-danger" %></li>
+            </ul>
+          </div>
+          <%# --- КІНЕЦЬ ЗМІН --- %>
+
+          <%# Іконка кошика (залишаємо як було) %>
+          <%= link_to cart_index_path, class: 'nav-link' do %>
             <i class="bi bi-bag" style="font-size: 1.2rem;"></i> 
             (<%= session[:cart]&.values&.sum || 0 %>)
           <% end %>
+
         <% else %>
+          
           <%# Single auth icon that links to the dedicated auth page %>
           <%= link_to auth_path, class: 'nav-link p-0', aria: { label: 'Sign in or register' } do %>
             <i class="bi bi-person-circle" style="font-size: 1.25rem;"></i>
           <% end %>
-          <%# Іконка кошика %>
-          <%= link_to cart_path, class: 'nav-link' do %>
-            <i class="bi bi-bag" style="font-size: 1.2rem;"></i>
+          
+          <%# Іконка кошика для гостя %>
+          <%= link_to cart_index_path, class: 'nav-link' do %>
+             <i class="bi bi-bag" style="font-size: 1.2rem;"></i>
           <% end %>
+
         <% end %>
       </div>
     </div>
   </nav>
 
-  <!-- Auth moved to /auth page -->
-  
   <body>
     
     <%# ВІДОБРАЖЕННЯ Flash Messages %>
     <div class="container">
-      <%# Keep existing inline bootstrap alerts for backward compatibility (optional) %>
       <% if notice %>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
           <%= notice %>
@@ -78,7 +86,8 @@
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       <% end %>
-      <%# Also emit flash messages as initial toasts for the toast controller %>
+      
+      <%# Toast logic %>
       <% flash.each do |key, msg| %>
         <% next if msg.blank? %>
         <% toast_type = case key.to_s %>
@@ -102,7 +111,6 @@
           &copy; <%= Time.current.year %>, Trippie Gluck
         </p>
         
-        <%# Використовуємо unlinked посилання для імітації статичних сторінок %>
         <%= link_to 'Refund policy', '#', class: 'text-decoration-none' %>
         <span class="separator">·</span>
         <%= link_to 'Privacy policy', '#', class: 'text-decoration-none' %>

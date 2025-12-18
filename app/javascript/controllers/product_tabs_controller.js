@@ -1,42 +1,47 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+  static targets = ["panel"]
+
   connect() {
     this.buttons = Array.from(this.element.querySelectorAll('.tab-btn'))
-    this.panels = Array.from(this.element.querySelectorAll('.tab-panel'))
-    this.onclick = this.onClick.bind(this)
-    this.buttons.forEach(btn => btn.addEventListener('click', this.onclick))
+    // Прив’язуємо selectTab до кнопок
+    this.selectTab = this.selectTab.bind(this)
+    this.buttons.forEach(btn => btn.addEventListener('click', this.selectTab))
   }
 
   disconnect() {
-    this.buttons.forEach(btn => btn.removeEventListener('click', this.onclick))
+    this.buttons.forEach(btn => btn.removeEventListener('click', this.selectTab))
   }
 
-  onClick(event) {
+  // Метод для перемикання вкладок
+  selectTab(event) {
     const btn = event.currentTarget
-    this.buttons.forEach(b => b.classList.remove('active'))
-    this.panels.forEach(p => p.classList.remove('active'))
+    const tabName = btn.dataset.tab
 
+    // Видаляємо активний стан у всіх кнопок і панелей
+    this.buttons.forEach(b => b.classList.remove('active'))
+    this.panelTargets.forEach(p => p.classList.remove('active'))
+
+    // Додаємо активний стан для кнопки
     btn.classList.add('active')
-    const target = btn.dataset.target
-    const panel = this.element.querySelector(`#${target}`)
+
+    // Знаходимо панель із data-tab-name
+    const panel = this.panelTargets.find(p => p.dataset.tabName === tabName)
     if (panel) {
-      // show panel with a small fade-in
       panel.classList.add('active')
       panel.classList.remove('fade-in')
-      // trigger reflow then add fade class for animation
       void panel.offsetWidth
       panel.classList.add('fade-in')
     }
   }
 
-  // toggle the review form visibility inside the reviews panel
+  // Показ/приховання форми додавання відгуку
   toggleReviewForm(event) {
     event.preventDefault()
     const form = this.element.querySelector('.review-form')
     if (!form) return
     form.classList.toggle('visible')
-    // focus first input when shown
     if (form.classList.contains('visible')) {
       const input = form.querySelector('textarea, input')
       if (input) input.focus()

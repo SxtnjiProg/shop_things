@@ -1,22 +1,60 @@
-<div class="product-detail-page">
-  <div class="product-detail-layout">
+<div class="product-detail-page container my-5">
+  
+  <%# ---------------------------------------------------- %>
+  <%# ОБГОРТКА ДЛЯ STIMULUS ГАЛЕРЕЇ ТА GRID (row) %>
+  <%# ---------------------------------------------------- %>
+  <div class="product-detail-layout row" data-controller="product-gallery">
     
-    <%# ЛІВА СЕКЦІЯ: Зображення %>
-    <div class="product-image-section">
-      <% if @product.image.present? %>
-        <%= image_tag @product.image.url, class: 'img-fluid', alt: @product.name %>
-      <% else %>
-        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 600px; border: 1px solid #e0e0e0;">
-          <h3 class="text-muted">Фото товару</h3>
+    <%# <<<<< ПЕРША КОЛОНКА (ЗЛІВА): Зображення та Галерея >>>>> %>
+    <div class="product-image-section col-md-6"> 
+      
+      <%# 1. ГОЛОВНЕ ЗОБРАЖЕННЯ %>
+      <div class="product-image-main mb-3" 
+           data-product-gallery-target="mainImage"
+           style="background-image: url('<%= @product.image.present? ? @product.image.url : asset_path('placeholder.png') %>'); 
+                  background-size: cover; 
+                  background-position: center; 
+                  height: 600px;
+                  border: 1px solid #e0e0e0;
+                  background-color: #f8f8f8;">
+          <% unless @product.image.present? %>
+            <div class="d-flex align-items-center justify-content-center h-100">
+                <h3 class="text-muted">Фото товару</h3>
+            </div>
+          <% end %>
+      </div>
+      
+      <%# 2. МІНІАТУРИ (КАРУСЕЛЬ) %>
+      <%# Збираємо всі наявні зображення в масив %>
+      <% gallery_images = [
+           @product.image, 
+           @product.image_2, 
+           @product.image_3, 
+           @product.image_4
+         ].select(&:present?)
+      %>
+
+      <% if gallery_images.size > 0 %>
+        <div class="d-flex gap-2 flex-wrap justify-content-start mt-3">
+          <% gallery_images.each_with_index do |img, index| %>
+            <a href="#" 
+               data-action="click->product-gallery#selectThumbnail" 
+               data-product-gallery-target="thumbnail"
+               data-image-url="<%= img.url %>"
+               class="thumbnail-link <%= 'active' if index == 0 %>"
+               style="width: 80px; height: 80px; overflow: hidden; border: 1px solid <%= index == 0 ? '#1a1a1a' : '#ddd' %>;">
+              <%= image_tag img.url, class: "img-fluid w-100 h-100", style: "object-fit: cover;" %>
+            </a>
+          <% end %>
         </div>
       <% end %>
       
-      <%# Тут можна додати галерею мініатюр, якщо будуть додаткові фото %>
-      
     </div>
 
-    <%# ПРАВА СЕКЦІЯ: Інформація та Управління %>
-    <div class="product-info-section">
+    <%# ---------------------------------------------------- %>
+    <%# <<<<< ДРУГА КОЛОНКА (СПРАВА): Інформація та Управління >>>>> %>
+    <%# ---------------------------------------------------- %>
+    <div class="product-info-section col-md-6">
       
       <h1><%= @product.name %></h1>
       
@@ -37,11 +75,16 @@
         <input id="quantity-input" type="number" class="form-control mb-4" value="1" min="1" max="<%= @product.stock %>" style="width: 100px;">
       </div>
       
+      <%# Форма для додавання в кошик %>
       <% if @product.stock.zero? %>
         <div class="alert alert-danger mt-3">Sold out! Товар тимчасово недоступний.</div>
       <% else %>
-        <%# Кнопка Add to cart (ЧОРНА) %>
-        <%= button_to 'Add to cart', add_to_cart_path(id: @product.id), method: :post, class: 'btn w-100 add-to-cart-btn' %>
+        <%= form_with url: add_to_cart_path(id: @product.id), method: :post, local: true, class: 'mt-3' do %>
+            <%= hidden_field_tag :product_id, @product.id %>
+            <button type="submit" class="btn w-100 add-to-cart-btn" style="padding: 15px 0;">
+                ADD TO CART
+            </button>
+        <% end %>
       <% end %>
 
       <hr class="my-4" style="border-color: #f0f0f0;">
@@ -49,12 +92,13 @@
       <%# ОПИС ТА ТАБИ (Details / Reviews) %>
       <div class="product-tabs mt-4" data-controller="product-tabs">
         <div class="tabs-nav">
-          <button type="button" class="tab-btn active" data-target="details">Details</button>
-          <button type="button" class="tab-btn" data-target="reviews">Reviews (<%= @reviews.count %>)</button>
+          <button type="button" class="tab-btn active" data-action="click->product-tabs#selectTab" data-tab="details">Details</button>
+          <button type="button" class="tab-btn" data-action="click->product-tabs#selectTab" data-tab="reviews">Reviews (<%= @product.reviews.count %>)</button>
         </div>
 
         <div class="tabs-content">
-          <div id="details" class="tab-panel active">
+          <%# !!! ВИПРАВЛЕННЯ: Додано клас active, щоб CSS відобразив контент при завантаженні !!! %>
+          <div data-product-tabs-target="panel" data-tab-name="details" class="tab-panel active">
             <div class="product-description-list">
               <% @product.description.to_s.split('. ').each do |sentence| %>
                 <li>• <%= sentence.strip %></li>
@@ -62,12 +106,14 @@
             </div>
           </div>
 
-          <div id="reviews" class="tab-panel">
+          <%# Вкладка ВІДГУКИ - без класу d-none, контролер керує visibility через .active %>
+          <div data-product-tabs-target="panel" data-tab-name="reviews" class="tab-panel">
             <hr class="my-3" style="border-color: #f0f0f0;">
-            <h4 style="font-weight:500;">Відгуки (<%= @reviews.count %>)</h4>
+            <h4 style="font-weight:500;">Відгуки (<%= @product.reviews.count %>)</h4>
 
-            <% if @reviews.any? %>
-              <% @reviews.each do |review| %>
+            <%# Список відгуків %>
+            <% if @product.reviews.any? %>
+              <% @product.reviews.each do |review| %>
                 <div class="tab-review-card mb-3">
                   <div class="avatar"><%= review.user.email.to_s[0].to_s.upcase %></div>
                   <div class="review-body">
@@ -75,12 +121,11 @@
                       <h6 style="margin:0;font-weight:600"><%= review.user.email %></h6>
                       <span class="badge bg-warning text-dark"><%= review.rating %>/5 ⭐</span>
                     </div>
-                    <p class="mt-2"><%= review.comment %></p>
+                    <p class="mt-2"><%= review.comment %></p> 
                     <div class="review-meta"><small class="text-muted"><%= review.created_at.strftime('%d.%m.%Y') %></small></div>
 
-                    <% if current_user && current_user == review.user %>
+                    <% if current_user && (current_user == review.user || current_user.admin?) %>
                       <div class="mt-2" role="group" style="display:flex;gap:8px">
-                        <%= link_to 'Редагувати', edit_product_review_path(@product, review), class: 'btn btn-sm btn-outline-dark' %>
                         <%= button_to 'Видалити', product_review_path(@product, review), method: :delete, data: { confirm: 'Ви впевнені?' }, class: 'btn btn-sm btn-outline-danger' %>
                       </div>
                     <% end %>
@@ -91,17 +136,18 @@
               <p class="text-muted">Ще немає відгуків. Будь першим!</p>
             <% end %>
 
-            <%# Форма відгуків: прихована за замовчуванням, показується кнопкою %>
+            <%# Форма додавання відгуків %>
             <% if user_signed_in? %>
               <div class="mt-3">
-                <button type="button" class="btn btn-secondary btn-sm" data-action="click->product-tabs#toggleReviewForm">Add review</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-action="click->product-tabs#toggleReviewForm" data-product-tabs-target="reviewFormToggle">Add review</button>
               </div>
 
-              <div class="review-form mt-3">
+              <%# Форма відгуку - прихована за замовчуванням %>
+              <div class="review-form mt-3" data-product-tabs-target="reviewForm">
                 <%= form_with model: [@product, Review.new], url: product_reviews_path(@product), method: :post, local: true, class: 'row g-3' do |f| %>
                   <div class="col-12">
                     <%= f.label :rating, 'Рейтинг', class: 'form-label' %>
-                    <%= f.number_field :rating, min: 1, max: 5, class: 'form-control' %>
+                    <%= f.number_field :rating, min: 1, max: 5, class: 'form-control', style: 'width: 100px;' %>
                   </div>
                   <div class="col-12">
                     <%= f.label :comment, 'Коментар', class: 'form-label' %>
@@ -125,7 +171,7 @@
 
       <%# АДМІН-ПІКТОГРАМИ %>
       <% if user_signed_in? && current_user.admin? %>
-        <div class="admin-actions mt-5">
+        <div class="admin-actions mt-5 d-flex gap-2">
           <%= link_to edit_product_path(@product), class: 'btn btn-sm btn-outline-dark' do %>
             <i class="bi bi-pencil-square"></i> Редагувати
           <% end %>
@@ -142,5 +188,4 @@
     <%= link_to '← Назад до каталогу', products_path, class: 'text-dark text-decoration-none' %>
   </div>
 
-  <!-- Tab behaviour handled by Stimulus controller: app/javascript/controllers/product_tabs_controller.js -->
 </div>

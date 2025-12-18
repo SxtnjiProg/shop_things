@@ -1,5 +1,8 @@
-<div class="container mt-4">
-  <h1>Створення нового товару</h1>
-  <%= render 'form' %>
-  <%= link_to 'Назад', products_path, class: 'btn btn-outline-secondary mt-3' %>
+<div class="container mt-5">
+  <h1 class="mb-4">Створення нового товару</h1>
+  
+  
+  <%= render 'form', product: @product %>
+  
+  <%= link_to '← Назад до списку', products_path, class: 'btn btn-secondary mt-3' %>
 </div>

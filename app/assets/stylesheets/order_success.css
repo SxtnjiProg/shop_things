@@ -1,0 +1,210 @@
+/* =======================================================
+   СТИЛІ ДЛЯ СТОРІНКИ УСПІШНОГО ЗАМОВЛЕННЯ (orders/success)
+   ======================================================= */
+
+.order-success-page {
+    padding: 60px 20px;
+    min-height: 70vh;
+}
+
+/* Центральний блок підтвердження */
+.success-confirmation-block {
+    padding: 40px 20px;
+    background-color: #ffffff;
+    border: 1px solid #f0f0f0;
+    margin-bottom: 40px;
+}
+
+/* Іконка успіху з анімацією */
+.success-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    background-color: #10b981;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: scaleIn 0.5s ease-out;
+}
+
+.success-icon-wrapper i {
+    font-size: 3rem;
+    color: #ffffff;
+    font-weight: bold;
+    animation: checkmark 0.6s ease 0.3s both;
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes checkmark {
+    0% {
+        transform: scale(0) rotate(-45deg);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+/* Заголовок */
+.success-confirmation-block h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.success-confirmation-block .lead {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-bottom: 30px;
+}
+
+/* Кнопки */
+.success-confirmation-block .btn-dark {
+    background-color: #1a1a1a;
+    border-color: #1a1a1a;
+    color: #ffffff;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: background-color 0.3s;
+}
+
+.success-confirmation-block .btn-dark:hover {
+    background-color: #333333;
+    border-color: #333333;
+}
+
+.success-confirmation-block .btn-outline-dark {
+    border-color: #1a1a1a;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+}
+
+.success-confirmation-block .btn-outline-dark:hover {
+    background-color: #1a1a1a;
+    border-color: #1a1a1a;
+    color: #ffffff;
+}
+
+/* Секція деталей замовлення */
+.order-details-summary {
+    padding-top: 40px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.order-details-summary h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.order-details-summary p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.8;
+    margin-bottom: 10px;
+}
+
+.order-details-summary strong {
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+/* Badge статусу */
+.order-details-summary .badge {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* List group стилі */
+.order-details-summary .list-group-item {
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 15px 0;
+    background-color: transparent;
+}
+
+.order-details-summary .list-group-item:last-child {
+    border-bottom: 2px solid #1a1a1a;
+    padding-top: 20px;
+    margin-top: 10px;
+}
+
+.order-details-summary .list-group-item .fw-bold {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+/* Загальна сума */
+.order-details-summary .list-group-item.fs-5 {
+    font-size: 1.3rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .order-success-page {
+        padding: 40px 15px;
+    }
+    
+    .success-confirmation-block h1 {
+        font-size: 1.5rem;
+    }
+    
+    .success-confirmation-block .lead {
+        font-size: 1rem;
+    }
+    
+    .success-icon-wrapper {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .success-icon-wrapper i {
+        font-size: 2rem;
+    }
+    
+    .success-confirmation-block .btn-dark,
+    .success-confirmation-block .btn-outline-dark {
+        width: 100%;
+        margin: 5px 0 !important;
+    }
+    
+    .order-details-summary {
+        padding-top: 30px;
+    }
+    
+    .order-details-summary h3 {
+        font-size: 1.2rem;
+    }
+    
+    .order-details-summary .col-md-6:first-child {
+        margin-bottom: 30px;
+    }
+}

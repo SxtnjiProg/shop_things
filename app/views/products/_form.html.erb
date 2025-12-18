@@ -1,63 +1,81 @@
-<%= form_with(model: @product, local: true, html: { class: 'needs-validation', multipart: true }) do |form| %>
-  <% if form.object.errors.any? %>
+<%= form_with(model: product, class: 'p-4 border rounded shadow-sm', local: true) do |form| %>
+  <% if product.errors.any? %>
     <div id="error_explanation" class="alert alert-danger">
-      <h2><%= form.object.errors.count %> помилок заборонили збереження товару:</h2>
+      <h4 class="alert-heading"><%= pluralize(product.errors.count, "помилка") %> заборонили збереження цього товару:</h4>
       <ul>
-        <% form.object.errors.full_messages.each do |message| %>
+        <% product.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
+  <h3 class="mb-4">Основна інформація про товар</h3>
+
   <div class="mb-3">
     <%= form.label :name, 'Назва товару', class: 'form-label' %>
     <%= form.text_field :name, class: 'form-control', required: true %>
   </div>
-  
+
+  <div class="mb-3">
+    <%= form.label :description, 'Опис товару', class: 'form-label' %>
+    <%= form.text_area :description, class: 'form-control' %>
+  </div>
+
   <div class="row">
     <div class="col-md-6 mb-3">
-      <%= form.label :price, 'Ціна (грн)', class: 'form-label' %>
-      <%= form.number_field :price, step: 0.01, class: 'form-control', required: true %>
+      <%= form.label :price, 'Ціна (€)', class: 'form-label' %>
+      <%= form.number_field :price, class: 'form-control', step: '0.01', min: '0', required: true %>
     </div>
+
     <div class="col-md-6 mb-3">
       <%= form.label :stock, 'Кількість на складі', class: 'form-label' %>
-      <%= form.number_field :stock, class: 'form-control', required: true %>
+      <%= form.number_field :stock, class: 'form-control', min: '0', required: true %>
     </div>
   </div>
 
   <div class="mb-3">
-    <%= form.label :category, 'Категорія', class: 'form-label' %>
-    <%= form.text_field :category, class: 'form-control' %>
-  </div>
+  <%= form.label :category_id, "Категорія", class: "form-label" %>
+  <%= form.collection_select :category_id, Category.all, :id, :name, { prompt: "Оберіть категорію" }, { class: "form-select" } %>
+</div>
 
+  <h3 class="mb-4 mt-5">Зображення товару (до 4-х)</h3>
+
+  <%# Основне зображення %>
   <div class="mb-3">
-    <%= form.label :description, 'Опис', class: 'form-label' %>
-    <%= form.text_area :description, rows: 4, class: 'form-control' %>
-  </div>
-  
-  <div class="mb-3">
-    <%= form.label :image, 'Зображення', class: 'form-label' %>
-    
-    <% if form.object.image.present? %>
-      <div class="mb-2">
-        <p>Поточне зображення:</p>
-        <%# ВИПРАВЛЕННЯ: Використовуємо .url %>
-        <%= image_tag form.object.image.url, class: 'img-thumbnail', style: 'max-width: 100px;' %>
-      </div>
-    <% end %>
-    
+    <%= form.label :image, 'Основне зображення', class: 'form-label' %>
     <%= form.file_field :image, class: 'form-control' %>
-    <div class="form-text">Завантажити файл з комп'ютера.</div>
-    
-    <hr>
-    <%= form.label :remote_image_url, 'Або вставте посилання на зображення', class: 'form-label mt-2' %>
-    <%= form.text_field :remote_image_url, class: 'form-control' %>
-    <div class="form-text">Використовується CarrierWave для завантаження з URL.</div>
+    <% if product.image.present? %>
+      <small class="text-muted d-block mt-2">Поточне: <%= link_to product.image.url, product.image.url, target: '_blank' %></small>
+    <% end %>
   </div>
-  
 
-  <div class="d-grid gap-2">
-    <%= form.submit (@product.new_record? ? 'Створити товар' : 'Оновити товар'), class: 'btn btn-primary' %>
+  <%# Додаткові зображення %>
+  <div class="mb-3">
+    <%= form.label :image_2, 'Додаткове зображення 1', class: 'form-label' %>
+    <%= form.file_field :image_2, class: 'form-control' %>
+    <% if product.image_2.present? %>
+      <small class="text-muted d-block mt-2">Поточне: <%= link_to product.image_2.url, product.image_2.url, target: '_blank' %></small>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :image_3, 'Додаткове зображення 2', class: 'form-label' %>
+    <%= form.file_field :image_3, class: 'form-control' %>
+    <% if product.image_3.present? %>
+      <small class="text-muted d-block mt-2">Поточне: <%= link_to product.image_3.url, product.image_3.url, target: '_blank' %></small>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :image_4, 'Додаткове зображення 3', class: 'form-label' %>
+    <%= form.file_field :image_4, class: 'form-control' %>
+    <% if product.image_4.present? %>
+      <small class="text-muted d-block mt-2">Поточне: <%= link_to product.image_4.url, product.image_4.url, target: '_blank' %></small>
+    <% end %>
+  </div>
+
+  <div class="actions mt-4">
+    <%= form.submit 'Зберегти товар', class: 'btn btn-primary w-100' %>
   </div>
 <% end %>

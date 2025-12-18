@@ -1,0 +1,390 @@
+<div class="container py-5">
+  <div class="row justify-content-center mb-4">
+    <div class="col-lg-10">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-4 d-flex align-items-center bg-white">
+          <div class="me-4 text-center">
+            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+              <i class="bi bi-person-fill text-secondary" style="font-size: 2.5rem;"></i>
+            </div>
+          </div>
+          <div>
+            <h3 class="fw-bold mb-1"><%= @user.email.split('@').first.capitalize %></h3>
+            <p class="text-muted mb-2"><%= @user.email %></p>
+            <% if @user.admin? %>
+              <span class="badge bg-dark rounded-pill px-3">Адміністратор</span>
+            <% else %>
+              <span class="badge bg-primary rounded-pill px-3">Клієнт</span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-header bg-white border-bottom-0 pt-4 px-4">
+          <ul class="nav nav-tabs card-header-tabs" id="profileTabs" role="tablist">
+            
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active fw-semibold text-dark" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                <i class="bi bi-info-circle me-2"></i>Профіль
+              </button>
+            </li>
+
+            <% if @user.admin? %>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link fw-semibold text-dark" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin" type="button" role="tab">
+                  <i class="bi bi-speedometer2 me-2"></i>Адміністрування
+                </button>
+              </li>
+            <% else %>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link fw-semibold text-dark" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab">
+                  <i class="bi bi-box-seam me-2"></i>Мої замовлення
+                </button>
+              </li>
+            <% end %>
+
+            <li class="nav-item" role="presentation">
+              <button class="nav-link fw-semibold text-dark" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+                <i class="bi bi-gear me-2"></i>Налаштування
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card-body p-4">
+          <div class="tab-content" id="profileTabsContent">
+            
+            <div class="tab-pane fade show active" id="overview" role="tabpanel">
+              <h5 class="mb-4">Інформація про акаунт</h5>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="p-3 bg-light rounded-3 h-100 border">
+                    <small class="text-muted d-block mb-1">Email</small>
+                    <span class="fw-medium"><%= @user.email %></span>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="p-3 bg-light rounded-3 h-100 border">
+                    <small class="text-muted d-block mb-1">Дата реєстрації</small>
+                    <span class="fw-medium"><%= @user.created_at.strftime("%d.%m.%Y") %></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <% if @user.admin? %>
+              <div class="tab-pane fade" id="admin" role="tabpanel">
+                <h5 class="mb-4">Панель керування</h5>
+                
+                <div class="row g-4 mb-5">
+                  <div class="col-md-6">
+                    <div class="card h-100 border-0 bg-light-subtle hover-shadow transition-all">
+                      <div class="card-body text-center p-4">
+                        <div class="mb-3 text-primary">
+                          <i class="bi bi-folder-plus display-4"></i>
+                        </div>
+                        <h5>Категорії</h5>
+                        <p class="text-muted small">Керування розділами каталогу</p>
+                        <%= link_to new_category_path, class: "btn btn-outline-primary w-100 stretched-link" do %>
+                          Додати категорію
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card h-100 border-0 bg-light-subtle hover-shadow transition-all">
+                      <div class="card-body text-center p-4">
+                        <div class="mb-3 text-success">
+                          <i class="bi bi-bag-plus display-4"></i>
+                        </div>
+                        <h5>Товари</h5>
+                        <p class="text-muted small">Додавання нових товарів</p>
+                        <%= link_to new_product_path, class: "btn btn-outline-success w-100 stretched-link" do %>
+                          Додати товар
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <h5 class="mb-3 pt-3 border-top">Всі замовлення користувачів</h5>
+                <% if @admin_orders.present? && @admin_orders.any? %>
+                  <div class="card border-0 shadow-sm">
+                    <div class="table-responsive">
+                      <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                          <tr>
+                            <th>ID</th>
+                            <th>Клієнт</th>
+                            <th>Сума</th>
+                            <th>Дата</th>
+                            <th style="min-width: 200px;">Статус</th>
+                            <th>Дії</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% @admin_orders.each do |order| %>
+                            <tr>
+                              <td class="fw-bold">#<%= order.id %></td>
+                              <td>
+                                <div class="d-flex flex-column">
+                                  <span class="fw-medium"><%= order.user.email %></span>
+                                  <span class="text-muted small" style="font-size: 0.75rem;">
+                                    <%= order.city %>
+                                  </span>
+                                </div>
+                              </td>
+                              <td class="fw-bold">€<%= order.total_price %></td>
+                              <td class="text-muted small"><%= order.created_at.strftime("%d.%m %H:%M") %></td>
+                              
+                              <td>
+                                <%= form_with model: order, url: order_path(order), method: :patch, class: "d-flex align-items-center gap-2" do |f| %>
+                                  <% 
+                                    status_class = case order.status
+                                      when 'completed' then 'text-success fw-bold'
+                                      when 'cancelled' then 'text-danger fw-bold'
+                                      when 'shipped' then 'text-primary fw-bold'
+                                      else 'text-dark'
+                                    end
+                                  %>
+                                  <%= f.select :status, 
+                                      options_for_select([
+                                        ['Очікує', 'pending'],
+                                        ['В обробці', 'processing'],
+                                        ['Відправлено', 'shipped'],
+                                        ['Виконано', 'completed'],
+                                        ['Скасовано', 'cancelled']
+                                      ], order.status), 
+                                      {}, 
+                                      class: "form-select form-select-sm border-0 bg-light #{status_class}", 
+                                      style: "font-weight: 500;",
+                                      onchange: "this.form.submit()" 
+                                  %>
+                                <% end %>
+                              </td>
+                              
+                              <td>
+                                <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#adminOrderCollapse<%= order.id %>">
+                                  <i class="bi bi-eye"></i>
+                                </button>
+                              </td>
+                            </tr>
+
+                            <tr class="bg-light collapse" id="adminOrderCollapse<%= order.id %>">
+                              <td colspan="6" class="p-3">
+                                <div class="d-flex gap-3 overflow-auto">
+                                  <% order.order_items.each do |item| %>
+                                    <div class="d-flex align-items-center bg-white p-2 rounded border" style="min-width: 200px;">
+                                      <% if item.product&.image&.present? %>
+                                        <%= image_tag item.product.image.url, width: 40, height: 40, class: "rounded object-fit-cover me-2" %>
+                                      <% else %>
+                                        <div class="bg-secondary bg-opacity-10 rounded me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                          <i class="bi bi-image text-muted"></i>
+                                        </div>
+                                      <% end %>
+                                      <div class="lh-1">
+                                        <small class="d-block fw-bold text-truncate" style="max-width: 120px;"><%= item.product&.name %></small>
+                                        <small class="text-muted">x<%= item.quantity %></small>
+                                      </div>
+                                    </div>
+                                  <% end %>
+                                </div>
+                                <div class="mt-2 text-muted small">
+                                  <strong>Адреса доставки:</strong> <%= order.country %>, <%= order.city %>, <%= order.street %>, <%= order.zip_code %>
+                                </div>
+                              </td>
+                            </tr>
+                          <% end %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                <% else %>
+                  <div class="alert alert-info">У магазині поки немає замовлень.</div>
+                <% end %>
+              </div>
+
+            <% else %>
+              <div class="tab-pane fade" id="orders" role="tabpanel">
+                <% if @orders.present? && @orders.any? %>
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                      <thead class="table-light">
+                        <tr>
+                          <th style="width: 10%;">№</th>
+                          <th style="width: 20%;">Дата</th>
+                          <th style="width: 20%;">Статус</th>
+                          <th style="width: 30%;">Адреса</th>
+                          <th class="text-end" style="width: 20%;">Сума</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% @orders.each do |order| %>
+                          <tr class="cursor-pointer" data-bs-toggle="collapse" data-bs-target="#orderCollapse<%= order.id %>" aria-expanded="false" title="Натисніть для деталей">
+                            <td class="fw-bold text-dark">#<%= order.id %></td>
+                            <td><%= order.created_at.strftime("%d.%m.%Y") %></td>
+                            <td>
+                              <% status_color = case order.status
+                                 when 'completed' then 'success'
+                                 when 'shipped' then 'info'
+                                 when 'paid', 'pending', 'new' then 'warning'
+                                 when 'cancelled' then 'danger'
+                                 else 'secondary'
+                                 end %>
+                              <span class="badge bg-<%= status_color %> bg-opacity-10 text-<%= status_color %> px-3 py-2 rounded-pill">
+                                <%= order.status.humanize %>
+                              </span>
+                            </td>
+                            <td>
+                              <small class="text-muted d-block text-truncate" style="max-width: 200px;">
+                                <%= order.city %>, <%= order.street %>
+                              </small>
+                            </td>
+                            <td class="text-end fw-bold">
+                              €<%= order.total_price %> <i class="bi bi-chevron-down ms-2 small text-muted"></i>
+                            </td>
+                          </tr>
+
+                          <tr class="bg-light-subtle">
+                            <td colspan="5" class="p-0 border-0">
+                              <div class="collapse" id="orderCollapse<%= order.id %>">
+                                <div class="p-4">
+                                  
+                                  <% 
+                                    progress_val = 0
+                                    progress_color = "bg-success"
+                                    
+                                    case order.status
+                                    when 'new', 'pending', 'paid', 'processing'
+                                      progress_val = 25
+                                    when 'shipped'
+                                      progress_val = 75
+                                    when 'completed'
+                                      progress_val = 100
+                                    when 'cancelled'
+                                      progress_val = 100
+                                      progress_color = "bg-danger"
+                                    end
+                                  %>
+                                  
+                                  <div class="mb-4 p-3 bg-white rounded border border-light">
+                                    <h6 class="text-muted mb-3 small text-uppercase fw-bold"><i class="bi bi-truck me-2"></i>Статус доставки</h6>
+                                    
+                                    <div class="progress" style="height: 6px; background-color: #f0f0f0;">
+                                      <div class="progress-bar <%= progress_color %>" role="progressbar" style="width: <%= progress_val %>%" aria-valuenow="<%= progress_val %>" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between mt-2 small">
+                                      <span class="<%= 'text-dark fw-bold' if progress_val >= 25 %> text-muted">Оброблено</span>
+                                      <span class="<%= 'text-dark fw-bold' if progress_val >= 75 %> text-muted text-center">В дорозі</span>
+                                      
+                                      <% if order.status == 'cancelled' %>
+                                        <span class="text-danger fw-bold text-end">Скасовано</span>
+                                      <% else %>
+                                        <span class="<%= 'text-dark fw-bold' if progress_val == 100 %> text-muted text-end">Доставлено</span>
+                                      <% end %>
+                                    </div>
+                                  </div>
+
+                                  <h6 class="mb-3 text-muted">Склад замовлення:</h6>
+                                  <div class="list-group shadow-sm mb-3">
+                                    <% order.order_items.each do |item| %>
+                                      <div class="list-group-item d-flex align-items-center p-3 border-0 mb-1 rounded-2">
+                                        <div class="me-3" style="width: 50px; height: 50px; background: #f8f9fa; border-radius: 8px; overflow: hidden;">
+                                          <% if item.product&.image&.present? %>
+                                            <%= image_tag item.product.image.url, class: "w-100 h-100 object-fit-cover" %>
+                                          <% else %>
+                                            <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted"><i class="bi bi-image"></i></div>
+                                          <% end %>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                          <h6 class="mb-0 text-dark"><%= item.product&.name || "Товар видалено" %></h6>
+                                          <small class="text-muted">Кількість: <%= item.quantity %> шт.</small>
+                                        </div>
+                                        <div class="text-end fw-semibold">
+                                          €<%= (item.price || 0) * (item.quantity || 0) %>
+                                        </div>
+                                      </div>
+                                    <% end %>
+                                  </div>
+                                  
+                                  <div class="p-3 bg-white rounded border border-light">
+                                    <div class="row text-sm">
+                                      <div class="col-6">
+                                        <span class="text-muted d-block small">Отримувач</span>
+                                        <span class="text-dark fw-medium"><%= @user.email %></span>
+                                      </div>
+                                      <div class="col-6 text-end">
+                                        <span class="text-muted d-block small">Адреса доставки</span>
+                                        <span class="text-dark fw-medium">
+                                          <%= order.city %>, <%= order.street %> (<%= order.zip_code %>)
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                <% else %>
+                  <div class="text-center py-5 text-muted">
+                    <i class="bi bi-cart-x display-1 mb-3 d-block text-secondary opacity-25"></i>
+                    <h5>Історія замовлень порожня</h5>
+                    <p>Ви ще нічого не замовляли. Перейдіть до каталогу!</p>
+                    <%= link_to "До покупок", root_path, class: "btn btn-dark mt-2" %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+
+            <div class="tab-pane fade" id="settings" role="tabpanel">
+              <h5 class="mb-4">Редагування даних</h5>
+              <div class="row">
+                <div class="col-md-8 col-lg-6">
+                  <%= form_with model: @user, url: update_user_info_path, method: :patch do |f| %>
+                    <div class="mb-3">
+                      <%= f.label :email, "Змінити Email", class: "form-label" %>
+                      <%= f.email_field :email, class: "form-control" %>
+                      <div class="form-text">Ми надішлемо підтвердження на нову пошту.</div>
+                    </div>
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-end">
+                      <%= f.submit "Зберегти зміни", class: "btn btn-dark" %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("turbo:load", function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get('tab'); // Наприклад ?tab=admin
+
+    if (tabParam) {
+      // Шукаємо кнопку з id="admin-tab" або "orders-tab"
+      const targetTabBtn = document.querySelector(`#${tabParam}-tab`);
+      if (targetTabBtn) {
+        const triggerEl = new bootstrap.Tab(targetTabBtn);
+        triggerEl.show();
+      }
+    }
+  });
+</script>

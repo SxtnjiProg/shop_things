@@ -22,13 +22,25 @@
     <%# Сітка товарів %>
     <div class="featured-grid">
       <% @products.each_with_index do |product, idx| %>
-        <article class="product-card" style="--i: <%= idx %>">
+        
+        <%# !!! Stimulus контролер для hover-ефекту !!! %>
+        <article class="product-card" style="--i: <%= idx %>"
+          data-controller="card-hover"
+          data-card-hover-secondary-image-url-value="<%= product.image_2.url if product.image_2.present? %>"
+          data-action="mouseover->card-hover#hoverIn mouseout->card-hover#hoverOut"
+        >
           <%= link_to product_path(product), class: 'product-link' do %>
+            
+            <%# Додаємо Stimulus target для головного зображення %>
             <% if product.image.present? %>
-              <div class="product-image" style="background-image: url('<%= product.image.url %>')"></div>
+              <div class="product-image" 
+                   data-card-hover-target="mainImage"
+                   style="background-image: url('<%= product.image.url %>')">
+              </div>
             <% else %>
-              <div class="product-image bg-light"></div>
+              <div class="product-image bg-light" data-card-hover-target="mainImage"></div>
             <% end %>
+            
             <div class="product-meta">
               <h3 class="product-name"><%= product.name %></h3>
               <div class="product-price"><%= number_to_currency(product.price, unit: '€') %></div>

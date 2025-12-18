@@ -4,7 +4,6 @@ class ProductsController < ApplicationController
   before_action :set_product, only: [:show, :edit, :update, :destroy]
   
   # Pundit: перевіряємо, чи була викликана авторизація
-  # ВИПРАВЛЕННЯ: Додано :show до виключень, оскільки це публічна дія.
   after_action :verify_authorized, except: [:index, :show] 
   after_action :verify_policy_scoped, only: [:index]
 
@@ -61,6 +60,18 @@ class ProductsController < ApplicationController
   end
 
   def product_params
-    params.require(:product).permit(:name, :price, :description, :category, :image, :remote_image_url, :stock)
+    # !!! ВИПРАВЛЕННЯ: Додано image_2, image_3, image_4 для Strong Parameters !!!
+    params.require(:product).permit(
+      :name, 
+      :price, 
+      :description, 
+      :category, 
+      :image, 
+      :remote_image_url, 
+      :stock,
+      :image_2, 
+      :image_3, 
+      :image_4
+    )
   end
 end
